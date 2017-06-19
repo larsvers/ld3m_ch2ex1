@@ -256,7 +256,7 @@ function ready(error, routes, airports) {
 /* Loaded data and handle user input */
 /* ================================= */
 
-d3.json('../../data/flights/countries.topo.json', function(error, world) {
+d3.json('/data/countries.topo.json', function(error, world) {
   if (error) throw error;
   
   // Draw the world
@@ -280,8 +280,8 @@ d3.json('../../data/flights/countries.topo.json', function(error, world) {
   	
 		// Load data as per button clicked
 		d3.queue()
-		  .defer(d3.csv, '../../data/flights/routes_' + flights + '.csv')
-		  .defer(d3.csv, '../../data/flights/airports_' + flights + '.csv')
+		  .defer(d3.csv, '/data/routes_' + flights + '.csv')
+		  .defer(d3.csv, '/data/airports_' + flights + '.csv')
 		  .await(ready);
   
   } // handleFlights()
