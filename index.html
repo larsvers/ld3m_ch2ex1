@@ -4,7 +4,7 @@
 <title>9 Canvas mapping - example 1</title>
 <meta charset="utf-8">
 
-<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="//d3js.org/d3.v5.min.js"></script>
 <script src="//d3js.org/topojson.v1.min.js"></script>
 <script src="//d3js.org/d3-array.v1.min.js"></script>
 <script src="//d3js.org/d3-geo.v1.min.js"></script>
@@ -280,8 +280,7 @@ function drawAirports(airports) {
 /* Set up visual with loaded data */
 /* ============================== */
 
-function ready(error, routes, airports) {
-  if (error) throw error;
+function ready(routes, airports) {
 
   /* Draw airports */
   /* ------------- */
@@ -333,8 +332,7 @@ function ready(error, routes, airports) {
 /* Loaded data and handle user input */
 /* ================================= */
 
-d3.json('data/countries.topo.json', function(error, world) {
-  if (error) throw error;
+d3.json('data/countries.topo.json').then(function(world) {
   
   // Draw the world
   drawMap(world);
@@ -355,12 +353,19 @@ d3.json('data/countries.topo.json', function(error, world) {
     // Get the number of flights per clicked button
     var flights = this.dataset.flights;
     
-    // Load data as per button clicked
-    d3.queue()
-      .defer(d3.csv, 'data/routes_' + flights + '.csv')
-      .defer(d3.csv, 'data/airports_' + flights + '.csv')
-      .await(ready);
   
+    var routes = d3.csv('data/routes_' + flights + '.csv').then(function(routes){ return routes; });
+    var airports = d3.csv('data/airports_' + flights + '.csv').then(function(airports){ return airports; });
+
+    Promise.all([routes, airports]).then(function(response) {
+
+      var routesResolved = response[0];
+      var airportsResolved = response[1];
+
+      ready(routesResolved, airportsResolved)
+
+    });
+
   } // handleFlights()
 
 }); // d3.json()
